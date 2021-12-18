@@ -49,7 +49,7 @@ app.post('/smarthome/update', async (req, res) => {
   } catch (e) {
     functions.logger.error('error updating firestore device document:', e);
     return res.status(400).send({
-      firestoreError: e.message,
+      firestoreError: (e as Error).message,
     });
   }
 
@@ -60,8 +60,9 @@ app.post('/smarthome/update', async (req, res) => {
         await smarthome.requestSync(userId)
       );
       functions.logger.debug('RequestSyncResponse:', requestSyncResponse);
-    } catch (e) {
-      const errorResponse = JSON.parse(e);
+    } catch (e ) {
+      const { message } = e as Error;
+      const errorResponse = JSON.parse(message);
       functions.logger.error(
         'error requesting sync to homegraph:',
         errorResponse
@@ -91,7 +92,8 @@ app.post('/smarthome/update', async (req, res) => {
       );
       functions.logger.debug('ReportStateResponse:', reportStateResponse);
     } catch (e) {
-      const errorResponse = JSON.parse(e);
+      const { message } = e as Error;
+      const errorResponse = JSON.parse(message);
       functions.logger.error(
         'error reporting device state to homegraph:',
         errorResponse
@@ -112,7 +114,7 @@ app.post('/smarthome/create', async (req, res) => {
   } catch (e) {
     functions.logger.error('error adding firestore device document:', e);
     return res.status(400).send({
-      firestoreError: e.message,
+      firestoreError: (e as Error).message,
     });
   }
   try {
@@ -120,7 +122,8 @@ app.post('/smarthome/create', async (req, res) => {
     const requestSyncResponse = JSON.parse(await smarthome.requestSync(userId));
     functions.logger.debug('RequestSyncResponse:', requestSyncResponse);
   } catch (e) {
-    const errorResponse = JSON.parse(e);
+    const { message } = e as Error;
+    const errorResponse = JSON.parse(message);
     functions.logger.error(
       'error requesting sync to homegraph:',
       errorResponse
@@ -140,7 +143,7 @@ app.post('/smarthome/delete', async (req, res) => {
   } catch (e) {
     functions.logger.error('error adding firestore device document:', e);
     return res.status(400).send({
-      firestoreError: e.message,
+      firestoreError: (e as Error).message,
     });
   }
   try {
@@ -148,7 +151,8 @@ app.post('/smarthome/delete', async (req, res) => {
     const requestSyncResponse = JSON.parse(await smarthome.requestSync(userId));
     functions.logger.debug('RequestSyncResponse:', requestSyncResponse);
   } catch (e) {
-    const errorResponse = JSON.parse(e);
+    const { message } = e as Error;
+    const errorResponse = JSON.parse(message);
     functions.logger.error(
       'error requesting sync to homegraph:',
       errorResponse

@@ -143,8 +143,9 @@ app.onExecute(async (body, headers) => {
         );
         functions.logger.debug('ReportStateResponse:', reportStateResponse);
       } catch (e) {
-        const errorResponse = JSON.parse(e);
-        functions.logger.error(
+        const { message } = e as Error;
+        const errorResponse = JSON.parse(message);
+          functions.logger.error(
           'error reporting device state to homegraph:',
           errorResponse
         );
@@ -154,7 +155,7 @@ app.onExecute(async (body, headers) => {
         'error returned by execution on firestore device document',
         e
       );
-      if (e.message === 'pinNeeded') {
+      if ((e as Error).message === 'pinNeeded') {
         commands.push({
           ids: [device.id],
           status: 'ERROR',
@@ -163,7 +164,7 @@ app.onExecute(async (body, headers) => {
             type: 'pinNeeded',
           },
         });
-      } else if (e.message === 'challengeFailedPinNeeded') {
+      } else if ((e as Error).message === 'challengeFailedPinNeeded') {
         commands.push({
           ids: [device.id],
           status: 'ERROR',
@@ -172,7 +173,7 @@ app.onExecute(async (body, headers) => {
             type: 'challengeFailedPinNeeded',
           },
         });
-      } else if (e.message === 'ackNeeded') {
+      } else if ((e as Error).message === 'ackNeeded') {
         commands.push({
           ids: [device.id],
           status: 'ERROR',
@@ -181,7 +182,7 @@ app.onExecute(async (body, headers) => {
             type: 'ackNeeded',
           },
         });
-      } else if (e.message === 'PENDING') {
+      } else if ((e as Error).message === 'PENDING') {
         commands.push({
           ids: [device.id],
           status: 'PENDING',
@@ -190,7 +191,7 @@ app.onExecute(async (body, headers) => {
         commands.push({
           ids: [device.id],
           status: 'ERROR',
-          errorCode: e.message,
+          errorCode: (e as Error).message,
         });
       }
     }
